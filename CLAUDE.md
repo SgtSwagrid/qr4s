@@ -17,7 +17,8 @@ Scala.js so that codes can be made in the browser. It is in beta.
 It is one module in `com.alecdorrington.qr4s`. `QrCode.of(text, correction)` is the public interface: byte mode
 (UTF-8), every version (1-40) and level, the smallest version that fits, the strongest `Correction` that fits a code
 of that size, and whichever of the eight masks the standard's penalty (`Masking.penalty`) scores lowest. A `QrCode`
-is its `modules`, drawn by `path` (SVG path data, a rectangle per run of dark modules along a row) or `svg`. The
+is its `modules`, drawn by `path` (SVG path data, a rectangle per run of dark modules along a row) or
+`svg(dark, light)` (black on white unless given other SVG colours, each escaped into its attribute by `quoted`). The
 rest is private: `Correction` holds the standard's block tables, `ReedSolomon` the error correction over GF(2⁸),
 `Layout` where the finder, timing and alignment patterns, the format and version information and the data go, and
 `Masking` the masks.
@@ -27,7 +28,8 @@ rest is private: `Correction` holds the standard's block tables, `ReedSolomon` t
 - `ZxingSuite` (`src/test/scalajvm`, as ZXing is a JVM test dependency) holds every version, level and mask to
   ZXing's own encoder, module for module, and scans codes back with ZXing's reader. Keep it passing: it is what says
   the codes are right. Each level is a test of its own, as all four together can outlast munit's 30 seconds on CI.
-- Codes are dark on light, always: not every scanner reads one inverted.
+- Codes are dark on light, always: not every scanner reads one inverted. `svg` takes any colours, and its
+  documentation tells callers to keep the dark much darker; it doesn't check them.
 - Scalafmt's `align.preset = more` aligns every `%` in a table, as it would a dependency's, which mangles arithmetic;
   such tables (`Correction`, `Masking.masks`) sit between `// format: off` and `// format: on`.
 

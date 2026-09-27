@@ -34,17 +34,33 @@ final case class QrCode(modules: Vector[Vector[Boolean]]):
     .mkString
 
   /**
-    * The code as an SVG image of its own, in its quiet zone. It is dark on
-    * light whatever surrounds it, as not every scanner reads a code inverted,
-    * and it scales to whatever box it is given.
+    * The code as an SVG image of its own, in its quiet zone, scaling to
+    * whatever box it is given. Each colour is any SVG knows, e.g. `#1C2333`,
+    * `rgb(28 35 51)` or `navy`. Keep the dark one much darker than the light:
+    * not every scanner reads a code inverted, or one of little contrast.
+    *
+    * @param dark
+    *   The colour of the dark modules. Where the image is part of a page,
+    *   `currentColor` is the colour of the text around it.
+    *
+    * @param light
+    *   The colour of the light modules and the quiet zone, or `none` to leave
+    *   them transparent, over a light background of the page's own.
     */
-  def svg: String =
+  def svg
+    (
+      dark: String = "#000000",
+      light: String = "#FFFFFF",
+    )
+    : String =
     val margin = QrCode.quietZone
     val span   = size + 2 * margin
     val box    = s"-$margin -$margin $span $span"
+    val ink    = QrCode.quoted(dark)
+    val paper  = QrCode.quoted(light)
     s"""<svg xmlns="http://www.w3.org/2000/svg" viewBox="$box" shape-rendering="crispEdges">""" +
-      s"""<rect x="-$margin" y="-$margin" width="$span" height="$span" fill="#FFFFFF"/>""" +
-      s"""<path d="$path" fill="#000000"/></svg>"""
+      s"""<rect x="-$margin" y="-$margin" width="$span" height="$span" fill="$paper"/>""" +
+      s"""<path d="$path" fill="$ink"/></svg>"""
 
 /**
   * Encodes text as a [[QrCode]], as its standard (ISO/IEC 18004) describes, in
@@ -260,6 +276,17 @@ object QrCode:
   private def byteOf(bits: Seq[Boolean]): Int = bits
     .padTo(8, false)
     .foldLeft(0)((byte, bit) => byte << 1 | (if bit then 1 else 0))
+
+  /**
+    * The given text as the value of an attribute in double quotes, which it can
+    * neither end nor add markup to.
+    */
+  private def quoted(text: String): String = text.flatMap:
+    case '&'  => "&amp;"
+    case '<'  => "&lt;"
+    case '>'  => "&gt;"
+    case '"'  => "&quot;"
+    case char => char.toString
 
   /** Where each run of dark modules in a row starts, and its length. */
   private def runs(row: Vector[Boolean]): List[(Int, Int)] = row
