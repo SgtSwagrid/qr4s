@@ -1,20 +1,21 @@
-ThisBuild / description := "A reusable template for Scala libraries."
+ThisBuild / description :=
+  "QR codes for Scala, on the JVM and in the browser, with no dependencies."
 
-ThisBuild / homepage :=
-  Some(url("https://alecdorrington.com/scala-library-template"))
+ThisBuild / homepage := Some(uri("https://github.com/SgtSwagrid/qr4s"))
 
 ThisBuild / organization         := "com.alecdorrington"
 ThisBuild / organizationName     := "SgtSwagrid"
-ThisBuild / organizationHomepage := Some(url("https://github.com/SgtSwagrid"))
+ThisBuild / organizationHomepage := Some(uri("https://github.com/SgtSwagrid"))
 
-ThisBuild / versionScheme := Some("strict")
+// Still in beta: anything may change between minor versions until 1.0.0.
+ThisBuild / versionScheme := Some("early-semver")
 
 ThisBuild / licenses :=
-  List("MIT" -> url("https://opensource.org/licenses/MIT"))
+  List("MIT" -> uri("https://opensource.org/licenses/MIT"))
 
 ThisBuild / developers := List(Developer(
   id = "SgtSwagrid",
   name = "Alec Dorrington",
   email = "alecdorrington@gmail.com",
-  url = url("https://github.com/SgtSwagrid"),
+  url = uri("https://github.com/SgtSwagrid"),
 ))
