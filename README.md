@@ -49,11 +49,19 @@ val code: Option[QrCode] = QrCode.of("https://example.com")
 
 ### Drawing a code
 
-`svg` is the code as an SVG image of its own: dark on light, in the margin scanners need around it,
+`svg` is the code as an SVG image of its own: black on white, in the margin scanners need around it,
 scaling to whatever box it is given.
 
 ```scala
-code.map(_.svg) // <svg xmlns="http://www.w3.org/2000/svg" viewBox="-4 -4 33 33" ...
+code.map(_.svg()) // <svg xmlns="http://www.w3.org/2000/svg" viewBox="-4 -4 33 33" ...
+```
+
+To match the colours around it, give it others: any colour SVG knows, for the dark modules and for the light
+ones with the margin. `currentColor` is the colour of the text around an image inlined in a page, and `none`
+leaves the light modules transparent, over a light background of the page's own.
+
+```scala
+code.map(_.svg(dark = "#312E81", light = "#EEF2FF"))
 ```
 
 To build the image yourself, as with a UI library's own SVG elements, `path` is the dark modules as the data
@@ -70,7 +78,8 @@ for
 yield (x, y)
 ```
 
-Keep a code dark on light: not every scanner reads one inverted.
+Whatever its colours, keep a code much darker than its background: not every scanner reads one inverted, or one
+of little contrast.
 
 ### Error correction
 
@@ -87,4 +96,8 @@ QrCode.of("https://example.com", Correction.High)
 
 ## 👁️ See also
 
+- [Hecate](https://github.com/SgtSwagrid/Hecate), a sibling, for user accounts, sessions, groups and permissions.
+- [Eunomia](https://github.com/SgtSwagrid/Eunomia), a sibling, for filtering, ordering and paging lists.
+- [Iris](https://github.com/SgtSwagrid/Iris), a sibling, a provider-agnostic client for large language models.
+- [Dike](https://github.com/SgtSwagrid/Dike), a sibling, for ranking by pairwise comparison.
 - This library was made using [Scala Library Template](https://github.com/SgtSwagrid/scala-library-template).

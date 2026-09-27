@@ -93,14 +93,24 @@ class QrCodeSuite extends FunSuite:
           code.modules,
         )
 
-  test("the image is the path, dark, over its quiet zone, light"):
-    val code = QrCode.of(link).get
-    val span = code.size + 2 * QrCode.quietZone
-    assert(code.svg.contains(s"""viewBox="-4 -4 $span $span""""))
-    assert(
-      code.svg.contains(s"""width="$span" height="$span" fill="#FFFFFF""""),
-    )
-    assert(code.svg.contains(s"""<path d="${ code.path }" fill="#000000"/>"""))
+  test("the image is the path, black, over its quiet zone, white"):
+    val code  = QrCode.of(link).get
+    val image = code.svg()
+    val span  = code.size + 2 * QrCode.quietZone
+    assert(image.contains(s"""viewBox="-4 -4 $span $span""""))
+    assert(image.contains(s"""width="$span" height="$span" fill="#FFFFFF""""))
+    assert(image.contains(s"""<path d="${ code.path }" fill="#000000"/>"""))
+
+  test("the image is drawn in whichever colours it is given"):
+    val code  = QrCode.of(link).get
+    val image = code.svg(dark = "navy", light = "none")
+    assert(image.contains("""fill="none"/>"""))
+    assert(image.contains(s"""<path d="${ code.path }" fill="navy"/>"""))
+
+  test("a colour can neither end its attribute nor add markup"):
+    val image = QrCode.of(link).get.svg(dark = """red"/><script>&""")
+    assert(image.contains("""fill="red&quot;/&gt;&lt;script&gt;&amp;"/>"""))
+    assert(!image.contains("<script>"))
 
   /**
     * The modules of a code of the given size which the given path paints, each
