@@ -8,7 +8,7 @@ object Dependencies:
   object V:
 
     val munit = "1.3.3"
-    val zxing = "3.5.3"
+    val zxing = "3.5.4"
 
   /** Library dependencies for testing with MUnit. */
   lazy val munit = libraryDependencies ++=
