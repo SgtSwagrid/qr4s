@@ -12,14 +12,8 @@ import munit.FunSuite
 import scala.jdk.CollectionConverters.*
 import scala.util.{Random, Try}
 
-/**
-  * Tests of QR codes against ZXing, an encoder and reader of them written apart
-  * from ours: that each code is the one ZXing makes of the same text, module
-  * for module, and that ZXing reads it back from an image.
-  */
 class ZxingSuite extends FunSuite:
 
-  /** What is read from an image of the given code, if it is found at all. */
   private def read
     (
       code: QrCode,
@@ -37,7 +31,6 @@ class ZxingSuite extends FunSuite:
       BinaryBitmap(HybridBinarizer(RGBLuminanceSource(width, width, pixels)))
     Try(QRCodeReader().decode(image, hints.asJava)).toOption
 
-  /** The text read from an image of the given code, if it is found at all. */
   private def scanned
     (
       code: QrCode,
@@ -46,22 +39,16 @@ class ZxingSuite extends FunSuite:
     )
     : Option[String] = read(code, scale, hints).map(_.getText)
 
-  /**
-    * The longest text of lower-case letters that fits the given code, all of
-    * which ZXing too puts in byte mode.
-    */
+  /** The longest lower-case text that fits, which ZXing puts in byte mode. */
   private def longest(version: Int, correction: Correction): String =
     val count = if version < 10 then 8 else 16
     val bytes = (8 * correction.dataCodewords(version) - 4 - count) / 8
     Random(version).alphanumeric.filter(_.isLower).take(bytes).mkString
 
-  /** Every version of code. */
   private val versions = (1 to 40).toList
 
-  /** The hint that an image holds nothing but the code, as ours do. */
   private val pure = Map(DecodeHintType.PURE_BARCODE -> true)
 
-  /** Whether the given code is the one ZXing makes of its text. */
   private def matches
     (
       code: QrCode,
@@ -83,8 +70,7 @@ class ZxingSuite extends FunSuite:
       ),
     )
 
-  // Each level is a test of its own: all four together can take CI longer than
-  // the thirty seconds munit allows a test.
+  // One test per level: all four together can exceed munit's 30 s limit on CI.
   Correction
     .values
     .foreach: correction =>

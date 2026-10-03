@@ -1,18 +1,10 @@
 package com.alecdorrington.qr4s
 
-/**
-  * The eight masks that may flip a QR code's data modules, and the penalty the
-  * standard chooses between them by: the fewer features the code has that
-  * confuse a scanner, such as long runs of one colour or shapes like its finder
-  * patterns, the lower.
-  */
+/** The eight data masks, and the penalty that chooses between them. */
 private[qr4s] object Masking:
 
-  /**
-    * Whether each mask, numbered from `0` as the format information names it,
-    * flips the module in the given column and row.
-    */
-  // Kept from aligning the `%` of each line, as it would a dependency's.
+  /** Whether each mask flips a module, in format information order. */
+  // Stops scalafmt aligning each `%` as it would a dependency's.
   // format: off
   val masks: Vector[(Int, Int) => Boolean] = Vector(
     (x, y) => (x + y) % 2 == 0,
@@ -26,22 +18,18 @@ private[qr4s] object Masking:
   )
   // format: on
 
-  /** How hard the given modules are to read: the lower, the easier. */
+  /** How hard the modules are to read: the lower, the easier. */
   def penalty(modules: Vector[Vector[Boolean]]): Int =
     (modules ++ modules.transpose)
       .map(line => runs(line) + lookalikes(line))
-      .sum + blocks(modules) + imbalance(modules)
+      .sum + squares(modules) + imbalance(modules)
 
-  /**
-    * Three for each run of five or more modules of one colour in a line, and
-    * one more for each module past the fifth.
-    */
+  /** Three per run of five or more of one colour, plus one per module beyond. */
   private def runs(line: Vector[Boolean]): Int = lengths(line)
     .filter(_ >= 5)
     .map(_ - 2)
     .sum
 
-  /** The lengths of the runs of one colour a line is made of. */
   private def lengths(line: Vector[Boolean]): List[Int] = line
     .foldLeft(List.empty[(Boolean, Int)]):
       case ((colour, length) :: rest, module) if module == colour =>
@@ -49,9 +37,9 @@ private[qr4s] object Masking:
       case (runs, module) => (module, 1) :: runs
     .map((_, length) => length)
 
-  /** Three for each square of four modules of one colour. */
-  private def blocks(modules: Vector[Vector[Boolean]]): Int =
-    val squares =
+  /** Three per square of two by two modules all of one colour. */
+  private def squares(modules: Vector[Vector[Boolean]]): Int =
+    val colours =
       for
         y <- 0 until modules.size - 1
         x <- 0 until modules.size - 1
@@ -61,25 +49,17 @@ private[qr4s] object Masking:
         modules(y + 1)(x),
         modules(y + 1)(x + 1),
       )
-    3 * squares.count(_.size == 1)
+    3 * colours.count(_.size == 1)
 
-  /**
-    * Forty for each look-alike of a finder pattern in a line: dark, light,
-    * three dark, light and dark, with four light modules on either side, where
-    * the quiet zone beyond the edges counts as light.
-    */
+  /** Forty per finder look-alike in a line, the quiet zone counting as light. */
   private def lookalikes(line: Vector[Boolean]): Int =
     val margin = Vector.fill(4)(false)
     40 * (margin ++ line ++ margin).sliding(11).count(finderLike.contains)
 
-  /** The look-alikes of a finder pattern, with their light side each way. */
   private val finderLike: Set[Vector[Boolean]] =
     Set("10111010000", "00001011101").map(_.map(_ == '1').toVector)
 
-  /**
-    * Ten for each five percent by which the share of dark modules strays from
-    * half, beyond the first five.
-    */
+  /** Ten per five percent the dark share strays from half, beyond the first. */
   private def imbalance(modules: Vector[Vector[Boolean]]): Int =
     val total = modules.size * modules.size
     val dark  = modules.map(_.count(identity)).sum
