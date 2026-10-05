@@ -7,7 +7,7 @@ object Dependencies:
   /** The version to use for each dependency. */
   object V:
 
-    val munit = "1.3.3"
+    val munit = "1.3.6"
     val zxing = "3.5.4"
 
   /** Library dependencies for testing with MUnit. */
