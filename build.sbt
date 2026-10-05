@@ -8,7 +8,7 @@ import sbtunidoc.ScalaUnidocPlugin
 // which includes it by reference and from which it is automatically synchronised.
 // Every project is named after the library, so that none clashes with a host's own.
 
-val scala3 = "3.8.4"
+val scala3 = "3.9.0"
 
 ThisBuild / scalaVersion := scala3
 
