@@ -33,7 +33,7 @@ Add the following to your `build.sbt`:
 libraryDependencies += "com.alecdorrington" %% "qr4s" % "0.1.0"
 ```
 
-With sbt 1, write `%%%` in a Scala.js project. Compiled with Scala `3.8.4`, with no intention to explicitly support
+With sbt 1, write `%%%` in a Scala.js project. Compiled with Scala `3.9.0`, with no intention to explicitly support
 older versions.
 
 ## 🚀 Usage
@@ -64,18 +64,19 @@ leaves the light modules transparent, over a light background of the page's own.
 code.map(_.svg(dark = "#312E81", light = "#EEF2FF"))
 ```
 
-To build the image yourself, as with a UI library's own SVG elements, `path` is the dark modules as the data
+To build the image yourself, as with a UI library's own SVG elements, `svgPath` is the dark modules as the data
 of one SVG path, one unit to a module. Fill it dark, over a light background reaching `QrCode.quietZone`
 modules beyond the code on every side.
 
 Or draw it any way you like, module by module:
 
 ```scala
-for
-  y <- 0 until code.size
-  x <- 0 until code.size
-  if code.dark(x, y)
-yield (x, y)
+code.map: qr =>
+  for
+    y <- 0 until qr.size
+    x <- 0 until qr.size
+    if qr.dark(x, y)
+  yield (x, y)
 ```
 
 Whatever its colours, keep a code much darker than its background: not every scanner reads one inverted, or one

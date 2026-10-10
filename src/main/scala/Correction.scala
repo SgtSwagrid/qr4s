@@ -1,37 +1,60 @@
 package com.alecdorrington.qr4s
 
 /**
-  * How much of a [[QrCode]] may be smudged, torn or misread with it still being
-  * read, which is paid for in the room it leaves for data. The levels run from
-  * the weakest to the strongest. For each version, a level fixes how many
-  * blocks the code's codewords are split into, and how many of each block's
-  * codewords correct its errors, as the standard tabulates them.
+  * A level of error correction: how much of a [[QrCode]] may be lost with it
+  * still being read, paid for in room for data. The levels run from the weakest
+  * to the strongest.
   *
   * @param bits
   *   The two bits naming the level in a code's format information.
   *
-  * @param correcting
-  *   The error-correcting codewords of each block, by version, from `1`.
+  * @param checksByVersion
+  *   The number of error-correcting codewords in each block, by version from
+  *   `1`.
   *
-  * @param blocks
-  *   The blocks the codewords are split into, by version, from `1`.
+  * @param blocksByVersion
+  *   The number of blocks the codewords are split into, by version from `1`.
   */
 enum Correction
   (
     val bits: Int,
-    correcting: Vector[Int],
-    blocks: Vector[Int],
+    checksByVersion: Vector[Int],
+    blocksByVersion: Vector[Int],
   ):
 
-  /** The error-correcting codewords of each block of the given version. */
-  def correctingAt(version: Int): Int = correcting(version - 1)
+  /**
+    * Counts the error-correcting codewords in each block of a code.
+    *
+    * @param version
+    *   The code's version, from `1` to `40`.
+    *
+    * @return
+    *   A number of codewords.
+    */
+  def checkCodewords(version: Int): Int = checksByVersion(version - 1)
 
-  /** The blocks the codewords of the given version are split into. */
-  def blocksAt(version: Int): Int = blocks(version - 1)
+  /**
+    * Counts the blocks a code's codewords are split into.
+    *
+    * @param version
+    *   The code's version, from `1` to `40`.
+    *
+    * @return
+    *   A number of blocks.
+    */
+  def blocks(version: Int): Int = blocksByVersion(version - 1)
 
-  /** The codewords of the given version left to carry data. */
+  /**
+    * Counts the codewords a code has left for data.
+    *
+    * @param version
+    *   The code's version, from `1` to `40`.
+    *
+    * @return
+    *   A number of codewords.
+    */
   def dataCodewords(version: Int): Int = Layout.codewords(version) -
-    correctingAt(version) * blocksAt(version)
+    checkCodewords(version) * blocks(version)
 
   // The tables are ten versions to a row.
   // format: off

@@ -3,28 +3,39 @@ package com.alecdorrington.qr4s
 import java.nio.charset.StandardCharsets
 
 /**
-  * A QR code: a square of modules, dark or light, which a camera reads back as
-  * the text it encodes. Scanners need a light margin around it, its
-  * [[QrCode.quietZone]], which is not part of it.
+  * A QR code: a square of dark and light modules. Scanners need a light margin
+  * around it, the [[QrCode.quietZone]], which is not part of it.
   *
   * @param modules
-  *   Whether each module is dark, row by row from the top, each from the left.
+  *   Whether each module is dark, row by row from the top, each row from the
+  *   left.
   */
 final case class QrCode(modules: Vector[Vector[Boolean]]):
 
   /** The width and height of the code in modules. */
   def size: Int = modules.size
 
-  /** Whether the module in the given column and row is dark. */
+  /**
+    * Whether the module in a given column and row is dark.
+    *
+    * @param x
+    *   The column, from `0` at the left.
+    *
+    * @param y
+    *   The row, from `0` at the top.
+    *
+    * @return
+    *   Whether the module is dark.
+    */
   def dark(x: Int, y: Int): Boolean = modules(y)(x)
 
   /**
-    * The dark modules as the data of one SVG path, one unit to a module with
-    * the code's top left corner at the origin: a rectangle for each run of them
-    * along a row. Fill it dark, over a light background reaching the
-    * [[QrCode.quietZone]] beyond the code on every side.
+    * The dark modules as the data of one SVG path, one unit per module, with
+    * the code's top left corner at the origin. Fill it dark over a light
+    * background reaching the [[QrCode.quietZone]] beyond the code on every
+    * side.
     */
-  def path: String = modules
+  def svgPath: String = modules
     .zipWithIndex
     .flatMap((row, y) =>
       QrCode
@@ -34,18 +45,20 @@ final case class QrCode(modules: Vector[Vector[Boolean]]):
     .mkString
 
   /**
-    * The code as an SVG image of its own, in its quiet zone, scaling to
-    * whatever box it is given. Each colour is any SVG knows, e.g. `#1C2333`,
-    * `rgb(28 35 51)` or `navy`. Keep the dark one much darker than the light:
-    * not every scanner reads a code inverted, or one of little contrast.
+    * Draws the code as a standalone SVG image, quiet zone included, scaling to
+    * fit any box. Keep the dark colour much darker than the light, as not every
+    * scanner reads an inverted or low-contrast code.
     *
     * @param dark
-    *   The colour of the dark modules. Where the image is part of a page,
-    *   `currentColor` is the colour of the text around it.
+    *   The colour of the dark modules, in any SVG syntax, such as `#1C2333` or
+    *   `currentColor`.
     *
     * @param light
-    *   The colour of the light modules and the quiet zone, or `none` to leave
-    *   them transparent, over a light background of the page's own.
+    *   The colour of the light modules and the quiet zone, or `none` for
+    *   transparent over a light background.
+    *
+    * @return
+    *   An `<svg>` element, as markup.
     */
   def svg
     (
@@ -60,39 +73,33 @@ final case class QrCode(modules: Vector[Vector[Boolean]]):
     val paper  = QrCode.quoted(light)
     s"""<svg xmlns="http://www.w3.org/2000/svg" viewBox="$box" shape-rendering="crispEdges">""" +
       s"""<rect x="-$margin" y="-$margin" width="$span" height="$span" fill="$paper"/>""" +
-      s"""<path d="$path" fill="$ink"/></svg>"""
+      s"""<path d="$svgPath" fill="$ink"/></svg>"""
 
-/**
-  * Encodes text as a [[QrCode]], as its standard (ISO/IEC 18004) describes, in
-  * byte mode, which holds any text.
-  */
+/** An encoder of text as [[QrCode]]s, in byte mode, by ISO/IEC 18004. */
 object QrCode:
 
   /** The width in modules of the light margin scanners need around a code. */
   val quietZone: Int = 4
 
-  /** The versions of code there are, each four modules wider than the last. */
   private val versions = 1 to 40
 
-  /** The four bits announcing data in byte mode. */
   private val byteMode = 0x4
 
-  /** The codewords that fill a code's room for data beyond its text, in turn. */
   private val padding = Vector(0xEC, 0x11)
 
   /**
-    * The smallest code of the given text, as UTF-8, with whichever mask makes
-    * it easiest to read.
+    * Encodes text, as UTF-8, in the smallest code that holds it, under the mask
+    * that makes it easiest to read.
     *
     * @param text
-    *   The text to encode, e.g. a web address.
+    *   The text to encode.
     *
     * @param correction
-    *   How much of the code, at least, may be lost with it still being read.
-    *   Where a stronger level fits a code of the same size, it is used instead.
+    *   The weakest level of error correction to use. A stronger level is used
+    *   where it fits a code of the same size.
     *
     * @return
-    *   A code, unless the text is too long for any.
+    *   A code, or `None` when the text is too long for any.
     */
   def of
     (
@@ -103,11 +110,7 @@ object QrCode:
     Masking.penalty(code.modules),
   ))
 
-  /**
-    * The smallest code of the given text, at the strongest level of correction
-    * from the given one that fits it, under each mask in turn, unless the text
-    * is too long for any.
-    */
+  /** The codes [[of]] chooses between: one under each mask. */
   private[qr4s] def candidates
     (text: String, correction: Correction)
     : Option[Vector[QrCode]] =
@@ -124,20 +127,17 @@ object QrCode:
           .last
         masked(bytes, version, strongest)
 
-  /** Whether the given number of bytes fits a code of the given version. */
   private def fits
     (
       bytes: Int,
       version: Int,
       correction: Correction,
     )
-    : Boolean = 4 + countBits(version) + 8 * bytes <=
+    : Boolean = 4 + lengthBits(version) + 8 * bytes <=
     8 * correction.dataCodewords(version)
 
-  /** The bits the number of bytes takes in a code of the given version. */
-  private def countBits(version: Int): Int = if version < 10 then 8 else 16
+  private def lengthBits(version: Int): Int = if version < 10 then 8 else 16
 
-  /** The given bytes as a code of the given version under each mask. */
   private def masked
     (
       bytes: Vector[Int],
@@ -159,16 +159,11 @@ object QrCode:
       .map(mask =>
         drawn(
           version,
-          patterns ++ Layout.format(version, correction, mask) ++
+          patterns ++ Layout.formatInformation(version, correction, mask) ++
             flipped(unmasked, mask),
         ),
       )
 
-  /**
-    * Each module the given bytes fill in a code of the given version, with
-    * whether it is dark before masking, in all the modules left by the given
-    * patterns and the format information.
-    */
   private def placed
     (
       bytes: Vector[Int],
@@ -189,7 +184,6 @@ object QrCode:
     val bits = codewords.flatMap(bitsOf(_, 8))
     order.zip(bits.padTo(order.size, false))
 
-  /** The given modules, each flipped where the given mask says. */
   private def flipped
     (
       modules: Vector[(Position, Boolean)],
@@ -199,7 +193,6 @@ object QrCode:
     (x, y) -> (dark ^ Masking.masks(mask)(x, y))
   }
 
-  /** The code of the given version whose every module is as given. */
   private def drawn
     (
       version: Int,
@@ -210,9 +203,8 @@ object QrCode:
     QrCode(Vector.tabulate(size, size)((y, x) => modules((x, y))))
 
   /**
-    * The data codewords of a code: byte mode, how many bytes there are, the
-    * bytes, a terminator of up to four zero bits, then padding, filling the
-    * code's room for data exactly.
+    * The data codewords: the mode, the byte count, the bytes, a terminator of
+    * up to four zero bits, then padding to fill the room exactly.
     */
   private def data
     (
@@ -223,18 +215,14 @@ object QrCode:
     : Vector[Int] =
     val room    = correction.dataCodewords(version)
     val content = bitsOf(byteMode, 4) ++
-      bitsOf(bytes.size, countBits(version)) ++ bytes.flatMap(bitsOf(_, 8))
+      bitsOf(bytes.size, lengthBits(version)) ++ bytes.flatMap(bitsOf(_, 8))
     val ended = content ++
       Vector.fill(math.min(4, 8 * room - content.size))(false)
     val written = ended.grouped(8).map(byteOf).toVector
     written ++
       Vector.tabulate(room - written.size)(i => padding(i % padding.size))
 
-  /**
-    * The data codewords split into blocks, each given the codewords that
-    * correct its errors, and interleaved: the first data codeword of every
-    * block, then the second, and so on, then likewise the error correction.
-    */
+  /** The data codewords in blocks, interleaved, then their error correction. */
   private def interleaved
     (
       data: Vector[Int],
@@ -242,15 +230,12 @@ object QrCode:
       correction: Correction,
     )
     : Vector[Int] =
-    val blocks = split(data, correction.blocksAt(version))
+    val blocks = split(data, correction.blocks(version))
     val checks =
-      blocks.map(ReedSolomon.remainder(_, correction.correctingAt(version)))
+      blocks.map(ReedSolomon.remainder(correction.checkCodewords(version)))
     interleave(blocks) ++ interleave(checks)
 
-  /**
-    * The given codewords split into the given number of blocks, the shorter
-    * first, with the longer each one codeword longer.
-    */
+  /** Splits codewords into blocks, the shorter first, as the standard orders. */
   private def split(codewords: Vector[Int], count: Int): Vector[Vector[Int]] =
     val short = codewords.size / count
     val longs = codewords.size % count
@@ -262,33 +247,27 @@ object QrCode:
       .map((start, end) => codewords.slice(start, end))
       .toVector
 
-  /** The first codeword of every block, then the second, and so on. */
   private def interleave(blocks: Vector[Vector[Int]]): Vector[Int] =
     (0 until blocks.map(_.size).max)
       .flatMap(i => blocks.flatMap(_.lift(i)))
       .toVector
 
-  /** The given number of the lowest bits of a value, the highest first. */
+  /** The lowest `count` bits of a value, the highest first. */
   private def bitsOf(value: Int, count: Int): Vector[Boolean] =
     (count - 1 to 0 by -1).map(Layout.bit(value, _)).toVector
 
-  /** Up to eight bits as a byte, the first highest, padded with zeros. */
   private def byteOf(bits: Seq[Boolean]): Int = bits
     .padTo(8, false)
     .foldLeft(0)((byte, bit) => byte << 1 | (if bit then 1 else 0))
 
-  /**
-    * The given text as the value of an attribute in double quotes, which it can
-    * neither end nor add markup to.
-    */
+  /** Escapes text for a double-quoted attribute, so it cannot add markup. */
   private def quoted(text: String): String = text.flatMap:
-    case '&'  => "&amp;"
-    case '<'  => "&lt;"
-    case '>'  => "&gt;"
-    case '"'  => "&quot;"
-    case char => char.toString
+    case '&'       => "&amp;"
+    case '<'       => "&lt;"
+    case '>'       => "&gt;"
+    case '"'       => "&quot;"
+    case character => character.toString
 
-  /** Where each run of dark modules in a row starts, and its length. */
   private def runs(row: Vector[Boolean]): List[(Int, Int)] = row
     .indices
     .foldRight(List.empty[(Int, Int)]): (x, found) =>
