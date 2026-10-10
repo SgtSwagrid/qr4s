@@ -17,7 +17,7 @@ Scala.js so that codes can be made in the browser. It is in beta.
 It is one module in `com.alecdorrington.qr4s`. `QrCode.of(text, correction)` is the public interface: byte mode
 (UTF-8), every version (1-40) and level, the smallest version that fits, the strongest `Correction` that fits a code
 of that size, and whichever of the eight masks the standard's penalty (`Masking.penalty`) scores lowest. A `QrCode`
-is its `modules`, drawn by `path` (SVG path data, a rectangle per run of dark modules along a row) or
+is its `modules`, drawn by `svgPath` (SVG path data, a rectangle per run of dark modules along a row) or
 `svg(dark, light)` (black on white unless given other SVG colours, each escaped into its attribute by `quoted`). The
 rest is private: `Correction` holds the standard's block tables, `ReedSolomon` the error correction over GF(2⁸),
 `Layout` where the finder, timing and alignment patterns, the format and version information and the data go, and
@@ -74,6 +74,11 @@ belong to the library.
 ### Code Style
 
 - You must read the [Code Style Guidelines](docs/STYLE_GUIDE.md).
+- Document every public type and member: a summary, then `@param` for each explicit parameter,
+  `@tparam` for each type parameter, and `@return` for any result but `Unit`, each one short
+  sentence. Summaries read: types "A ...", values "The ...", Booleans "Whether ...", methods a
+  third-person verb ("Sends ..."), never "Returns ...". Private members get a comment only for a
+  non-obvious contract or gotcha, usually in one sentence.
 
 ### Pull Requests
 

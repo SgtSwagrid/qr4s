@@ -2,7 +2,6 @@ package com.alecdorrington.qr4s
 
 import munit.FunSuite
 
-/** Tests of how text is encoded as a QR code. */
 class QrCodeSuite extends FunSuite:
 
   private val link = "https://example.com/ab3de"
@@ -31,7 +30,7 @@ class QrCodeSuite extends FunSuite:
       32, 91, 11, 120, 209, 114, 220, 77, 67, 64, 236, 17, 236, 17, 236, 17,
     )
     assertEquals(
-      ReedSolomon.remainder(data, 10),
+      ReedSolomon.remainder(10)(data),
       Vector(196, 35, 39, 119, 235, 215, 231, 226, 93, 23),
     )
 
@@ -89,7 +88,7 @@ class QrCodeSuite extends FunSuite:
       .foreach: correction =>
         val code = QrCode.of(link * 20, correction).get
         assertEquals(
-          painted(code.path, code.size),
+          painted(code.svgPath, code.size),
           code.modules,
         )
 
@@ -99,23 +98,20 @@ class QrCodeSuite extends FunSuite:
     val span  = code.size + 2 * QrCode.quietZone
     assert(image.contains(s"""viewBox="-4 -4 $span $span""""))
     assert(image.contains(s"""width="$span" height="$span" fill="#FFFFFF""""))
-    assert(image.contains(s"""<path d="${ code.path }" fill="#000000"/>"""))
+    assert(image.contains(s"""<path d="${ code.svgPath }" fill="#000000"/>"""))
 
   test("the image is drawn in whichever colours it is given"):
     val code  = QrCode.of(link).get
     val image = code.svg(dark = "navy", light = "none")
     assert(image.contains("""fill="none"/>"""))
-    assert(image.contains(s"""<path d="${ code.path }" fill="navy"/>"""))
+    assert(image.contains(s"""<path d="${ code.svgPath }" fill="navy"/>"""))
 
   test("a colour can neither end its attribute nor add markup"):
     val image = QrCode.of(link).get.svg(dark = """red"/><script>&""")
     assert(image.contains("""fill="red&quot;/&gt;&lt;script&gt;&amp;"/>"""))
     assert(!image.contains("<script>"))
 
-  /**
-    * The modules of a code of the given size which the given path paints, each
-    * `true` where it is painted once, and failing where it is painted twice.
-    */
+  /** The modules a path paints, failing the test where it paints one twice. */
   private def painted(path: String, size: Int): Vector[Vector[Boolean]] =
     val run      = raw"M(\d+) (\d+)h(\d+)v1h-(\d+)z".r
     val covering = run
@@ -130,10 +126,6 @@ class QrCodeSuite extends FunSuite:
     val cells = covering.toSet
     Vector.tabulate(size, size)((y, x) => cells.contains(x -> y))
 
-  /**
-    * Whether the given code has a finder pattern with its top left corner at
-    * the given column and row: a dark ring, a light one, and a dark square.
-    */
   private def finder(code: QrCode, left: Int, top: Int): Boolean = (0 until 7)
     .forall(y =>
       (0 until 7).forall(x =>
