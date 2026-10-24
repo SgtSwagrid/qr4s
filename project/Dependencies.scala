@@ -6,7 +6,7 @@ object Dependencies:
   object V:
 
     val munit = "1.3.3"
-    val zxing = "3.5.3"
+    val zxing = "3.5.4"
 
   lazy val munit = libraryDependencies ++=
     Seq("org.scalameta" %% "munit" % V.munit % Test)
