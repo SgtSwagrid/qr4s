@@ -5,7 +5,7 @@ object Dependencies:
 
   object V:
 
-    val munit = "1.3.3"
+    val munit = "1.3.6"
     val zxing = "3.5.4"
 
   lazy val munit = libraryDependencies ++=
