@@ -97,8 +97,8 @@ QrCode.of("https://example.com", Correction.High)
 
 ## 👁️ See also
 
-- [Hecate](https://github.com/SgtSwagrid/Hecate), a sibling, for user accounts, sessions, groups and permissions.
-- [Eunomia](https://github.com/SgtSwagrid/Eunomia), a sibling, for filtering, ordering and paging lists.
-- [Iris](https://github.com/SgtSwagrid/Iris), a sibling, a provider-agnostic client for large language models.
-- [Dike](https://github.com/SgtSwagrid/Dike), a sibling, for ranking by pairwise comparison.
+- [Hecate](https://github.com/SgtSwagrid/hecate), a sibling, for user accounts, sessions, groups and permissions.
+- [Eunomia](https://github.com/SgtSwagrid/eunomia), a sibling, for filtering, ordering and paging lists.
+- [Iris](https://github.com/SgtSwagrid/iris), a sibling, a provider-agnostic client for large language models.
+- [Dike](https://github.com/SgtSwagrid/dike), a sibling, for ranking by pairwise comparison.
 - This library was made using [Scala Library Template](https://github.com/SgtSwagrid/scala-library-template).
