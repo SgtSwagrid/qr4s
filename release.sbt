@@ -1,5 +1,5 @@
 ThisBuild / description :=
-  "QR codes for Scala, on the JVM and in the browser, with no dependencies."
+  "Generate QR codes in Scala, on the JVM and in the browser."
 
 ThisBuild / homepage := Some(uri("https://github.com/SgtSwagrid/qr4s"))
 
