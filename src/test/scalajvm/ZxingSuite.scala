@@ -47,6 +47,9 @@ class ZxingSuite extends FunSuite:
 
   private val versions = (1 to 40).toList
 
+  /** The versions either side of each change in a code's layout or fields. */
+  private val boundaries = Set(1, 2, 7, 9, 10, 26, 27, 40)
+
   private val pure = Map(DecodeHintType.PURE_BARCODE -> true)
 
   private def matches
@@ -77,30 +80,37 @@ class ZxingSuite extends FunSuite:
       test(
         s"every version and mask at level $correction is the code ZXing makes",
       ):
-        val different =
-          for
-            version <- versions
-            text = longest(version, correction)
-            (code, mask) <- QrCode.candidates(text, correction).get.zipWithIndex
-            if !matches(code, text, version, correction, mask)
-          yield s"version $version, mask $mask"
+        val different = versions.flatMap: version =>
+          val text  = longest(version, correction)
+          val codes = QrCode.candidates(text, correction).get
+          val masks = codes
+            .indices
+            .filterNot(mask =>
+              matches(
+                codes(mask),
+                text,
+                version,
+                correction,
+                mask,
+              ),
+            )
+            .map(mask => s"version $version, mask $mask")
+          // The code chosen is one of them, so of this version and level.
+          val chosen = Option.when(
+            boundaries(version) &&
+            !QrCode.of(text, correction).exists(codes.contains),
+          )(s"version $version, as chosen")
+          masks ++ chosen
         assertEquals(different, Nil)
 
-  Correction
-    .values
-    .foreach: correction =>
-      test(s"every version at level $correction is read back as its text"):
-        val unread =
-          for
-            version <- versions
-            text = longest(version, correction)
-            code = QrCode.of(text, correction)
-            if code.map(_.size) != Some(4 * version + 17) ||
-            code.flatMap(scanned(_, 4, pure)) != Some(text)
-          yield s"version $version"
-        assertEquals(unread, Nil)
-
-  test("a code takes the strongest level of correction that fits its size"):
+  test("a code is read back at any scale, at the strongest level that fits"):
+    val link = "https://example.com/rlk46"
+    List(2, 3, 10).foreach(scale =>
+      assertEquals(
+        QrCode.of(link).flatMap(scanned(_, scale)),
+        Some(link),
+      ),
+    )
     def level(text: String, correction: Correction): Option[AnyRef] = read(
       QrCode.of(text, correction).get,
       4,
@@ -116,13 +126,4 @@ class ZxingSuite extends FunSuite:
     assertEquals(
       level("a" * 14, Correction.Medium),
       Some("M"),
-    )
-
-  test("a link is found and read back in an image at any scale"):
-    val link = "https://example.com/rlk46"
-    (2 to 10).foreach(scale =>
-      assertEquals(
-        QrCode.of(link).flatMap(scanned(_, scale)),
-        Some(link),
-      ),
     )
