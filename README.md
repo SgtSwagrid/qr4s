@@ -12,7 +12,7 @@
 </div>
 
 > [!WARNING]
-> qr4s is in beta. It is young, it has one user, and anything may change between minor versions.
+> qr4s is still a prototype. Anything could be broken or change between minor versions.
 
 An encoder of QR codes, as their standard (ISO/IEC 18004) describes them, written in plain Scala with no
 dependencies, so that it runs unchanged in the browser with [Scala.js](https://www.scala-js.org/).
@@ -27,14 +27,12 @@ Every code is tested against ZXing's own encoder, module for module, and scanned
 
 ## ⬇️ Installation
 
-Add the following to your `build.sbt`:
+The following applies for [Scala 3](https://www.scala-lang.org/) projects built with [sbt 2](https://www.scala-sbt.org/).
+Add the library to your `build.sbt` file, with the desired version number (e.g. [latest](../../releases/latest)):
 
 ```scala
-libraryDependencies += "com.alecdorrington" %% "qr4s" % "0.2.0"
+libraryDependencies += "com.alecdorrington" %% "qr4s" % "{version}"
 ```
-
-With sbt 1, write `%%%` in a Scala.js project. Compiled with Scala `3.9.0`, with no intention to explicitly support
-older versions.
 
 ## 🚀 Usage
 
