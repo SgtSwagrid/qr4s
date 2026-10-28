@@ -12,7 +12,7 @@ Keep it concise and actionable.
 ## Project overview
 
 This is qr4s, a Scala 3 encoder of QR codes (ISO/IEC 18004) with no dependencies, cross-compiled for the JVM and
-Scala.js so that codes can be made in the browser. It is in beta.
+Scala.js so that codes can be made in the browser. It is still a prototype.
 
 It is one module in `com.alecdorrington.qr4s`. `QrCode.of(text, correction)` is the public interface: byte mode
 (UTF-8), every version (1-40) and level, the smallest version that fits, the strongest `Correction` that fits a code
@@ -61,9 +61,10 @@ it only through a release (below).
 
 ### Releases
 
-1. Land the changes on `main` by pull request, the last of them setting the README's installation line to the new
-   version. qr4s is in beta, versioned by early semver (`versionScheme`): while it is `0.x`, the minor version goes up
-   for any change that can break a user's build or behaviour, and the patch version for anything else.
+1. Land the changes on `main` by pull request. The README's installation line names no version (it reads
+   `{version}`, pointing to the latest release), so a release leaves it as it is. qr4s is still a prototype, versioned
+   by early semver (`versionScheme`): while it is `0.x`, the minor version goes up for any change that can break a
+   user's build or behaviour, and the patch version for anything else.
 2. Publish a GitHub release of `main` tagged `v<version>`, with notes written for a user, as the earlier releases' are
    (the installation line, then what is Changed, Added and Fixed). `publish.yml` then publishes `qr4s_3` and
    `qr4s_sjs1_3` to Maven Central through `sbt-ci-release`, which takes the version from the tag, and `docs.yml`
