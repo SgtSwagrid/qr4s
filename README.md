@@ -30,7 +30,7 @@ Every code is tested against ZXing's own encoder, module for module, and scanned
 Add the following to your `build.sbt`:
 
 ```scala
-libraryDependencies += "com.alecdorrington" %% "qr4s" % "0.1.0"
+libraryDependencies += "com.alecdorrington" %% "qr4s" % "0.2.0"
 ```
 
 With sbt 1, write `%%%` in a Scala.js project. Compiled with Scala `3.9.0`, with no intention to explicitly support
