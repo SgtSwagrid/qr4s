@@ -53,6 +53,11 @@ it only through a release (below).
   `qr4s_sjs1_3`. `qr4sRoot` aggregates them and builds the Scaladoc (of the JVM side only), and is not published.
 - The matrix pins its `sourceDirectory` to this build's own `src`, as sbt 2 otherwise resolves a matrix's sources
   against the working directory, which is not this build's when another includes it.
+- `qr4sRoot` shares the matrix's directory, so clears its source and resource directories alike: IntelliJ would
+  otherwise count it among the owners of the shared sources and highlight them by its classpath.
+- Sources sit in their packages' directories (`src/main/scala/com/alecdorrington/qr4s/`), with no `packagePrefix`:
+  IntelliJ's sbt import never gives a prefix to the module holding the sources the JVM and JS share, so every `package`
+  line there was flagged on each fresh import.
 
 ### Releases
 
