@@ -1,6 +1,6 @@
 pages = [{"l":"index.html#","e":false,"i":"","n":"qr4s","t":"qr4s","d":"","k":"static","x":""},
 {"l":"com/alecdorrington/qr4s.html#","e":false,"i":"","n":"com.alecdorrington.qr4s","t":"com.alecdorrington.qr4s","d":"","k":"package","x":""},
-{"l":"com/alecdorrington/qr4s/Correction.html#","e":false,"i":"","n":"Correction","t":"Correction(val bits: Int, correcting: Vector[Int], blocks: Vector[Int])","d":"com.alecdorrington.qr4s","k":"enum","x":""},
+{"l":"com/alecdorrington/qr4s/Correction.html#","e":false,"i":"","n":"Correction","t":"Correction(val bits: Int, checksByVersion: Vector[Int], blocksByVersion: Vector[Int])","d":"com.alecdorrington.qr4s","k":"enum","x":""},
 {"l":"com/alecdorrington/qr4s/Correction.html#Low-0","e":false,"i":"","n":"Low","t":"Low extends Correction","d":"com.alecdorrington.qr4s.Correction","k":"val","x":""},
 {"l":"com/alecdorrington/qr4s/Correction.html#Medium-0","e":false,"i":"","n":"Medium","t":"Medium extends Correction","d":"com.alecdorrington.qr4s.Correction","k":"val","x":""},
 {"l":"com/alecdorrington/qr4s/Correction.html#Quartile-0","e":false,"i":"","n":"Quartile","t":"Quartile extends Correction","d":"com.alecdorrington.qr4s.Correction","k":"val","x":""},
@@ -10,6 +10,6 @@ pages = [{"l":"index.html#","e":false,"i":"","n":"qr4s","t":"qr4s","d":"","k":"s
 {"l":"com/alecdorrington/qr4s/QrCode$.html#quietZone-0","e":false,"i":"","n":"quietZone","t":"quietZone: Int","d":"com.alecdorrington.qr4s.QrCode","k":"val","x":""},
 {"l":"com/alecdorrington/qr4s/QrCode.html#","e":false,"i":"","n":"QrCode","t":"QrCode(modules: Vector[Vector[Boolean]])","d":"com.alecdorrington.qr4s","k":"class","x":""},
 {"l":"com/alecdorrington/qr4s/QrCode.html#dark-780","e":false,"i":"","n":"dark","t":"dark(x: Int, y: Int): Boolean","d":"com.alecdorrington.qr4s.QrCode","k":"def","x":""},
-{"l":"com/alecdorrington/qr4s/QrCode.html#path-0","e":false,"i":"","n":"path","t":"path: String","d":"com.alecdorrington.qr4s.QrCode","k":"def","x":""},
 {"l":"com/alecdorrington/qr4s/QrCode.html#size-0","e":false,"i":"","n":"size","t":"size: Int","d":"com.alecdorrington.qr4s.QrCode","k":"def","x":""},
-{"l":"com/alecdorrington/qr4s/QrCode.html#svg-0","e":false,"i":"","n":"svg","t":"svg: String","d":"com.alecdorrington.qr4s.QrCode","k":"def","x":""}];
+{"l":"com/alecdorrington/qr4s/QrCode.html#svg-fffff52f","e":false,"i":"","n":"svg","t":"svg(dark: String = ..., light: String = ...): String","d":"com.alecdorrington.qr4s.QrCode","k":"def","x":""},
+{"l":"com/alecdorrington/qr4s/QrCode.html#svgPath-0","e":false,"i":"","n":"svgPath","t":"svgPath: String","d":"com.alecdorrington.qr4s.QrCode","k":"def","x":""}];
