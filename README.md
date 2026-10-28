@@ -12,7 +12,7 @@
 </div>
 
 > [!WARNING]
-> qr4s is still a prototype. Anything could be broken or change between minor versions.
+> qr4s is in beta. It is young, it has one user, and anything may change between minor versions.
 
 An encoder of QR codes, as their standard (ISO/IEC 18004) describes them, written in plain Scala with no
 dependencies, so that it runs unchanged in the browser with [Scala.js](https://www.scala-js.org/).
@@ -27,16 +27,18 @@ Every code is tested against ZXing's own encoder, module for module, and scanned
 
 ## ⬇️ Installation
 
-The following applies for [Scala 3](https://www.scala-lang.org/) projects built with [sbt 2](https://www.scala-sbt.org/).
-Add the library to your `build.sbt` file, with the desired version number (e.g. [latest](../../releases/latest)):
+Add the following to your `build.sbt`:
 
 ```scala
-libraryDependencies += "com.alecdorrington" %% "qr4s" % "{version}"
+libraryDependencies += "com.alecdorrington" %% "qr4s" % "0.1.0"
 ```
+
+With sbt 1, write `%%%` in a Scala.js project. Compiled with Scala `3.9.0`, with no intention to explicitly support
+older versions.
 
 ## 🚀 Usage
 
-[`QrCode.of`](src/main/scala/com/alecdorrington/qr4s/QrCode.scala) encodes text as UTF-8, in the smallest code it fits, or
+[`QrCode.of`](src/main/scala/QrCode.scala) encodes text as UTF-8, in the smallest code it fits, or
 `None` if it is too long for any:
 
 ```scala
@@ -82,7 +84,7 @@ of little contrast.
 
 ### Error correction
 
-A [`Correction`](src/main/scala/com/alecdorrington/qr4s/Correction.scala) level says how much of a code may be smudged, torn or
+A [`Correction`](src/main/scala/Correction.scala) level says how much of a code may be smudged, torn or
 misread with it still being read, paid for in room for data: `Low` (about 7%), `Medium` (15%, the default),
 `Quartile` (25%) or `High` (30%). It is the least a code gets: where a stronger level fits a code of the same
 size, that is used instead.
