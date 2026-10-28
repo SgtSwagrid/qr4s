@@ -38,7 +38,7 @@ older versions.
 
 ## 🚀 Usage
 
-[`QrCode.of`](src/main/scala/QrCode.scala) encodes text as UTF-8, in the smallest code it fits, or
+[`QrCode.of`](src/main/scala/com/alecdorrington/qr4s/QrCode.scala) encodes text as UTF-8, in the smallest code it fits, or
 `None` if it is too long for any:
 
 ```scala
@@ -84,7 +84,7 @@ of little contrast.
 
 ### Error correction
 
-A [`Correction`](src/main/scala/Correction.scala) level says how much of a code may be smudged, torn or
+A [`Correction`](src/main/scala/com/alecdorrington/qr4s/Correction.scala) level says how much of a code may be smudged, torn or
 misread with it still being read, paid for in room for data: `Low` (about 7%), `Medium` (15%, the default),
 `Quartile` (25%) or `High` (30%). It is the least a code gets: where a stronger level fits a code of the same
 size, that is used instead.
