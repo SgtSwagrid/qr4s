@@ -12,22 +12,23 @@
 </div>
 
 > [!WARNING]
-> qr4s is still a prototype. Anything could be broken or change between minor versions.
+> qr4s is still in beta. Anything could change between minor versions.
 
-An encoder of QR codes, as their standard (ISO/IEC 18004) describes them, written in plain Scala with no
-dependencies, so that it runs unchanged in the browser with [Scala.js](https://www.scala-js.org/).
-[ZXing](https://github.com/zxing/zxing) is Java, and so cannot.
+An encoder of QR codes for [Scala 3](https://www.scala-lang.org/), as per [ISO/IEC 18004](https://www.iso.org/standard/83389.html).
 
-- Every version (1 to 40) and every level of error correction.
-- The standard's penalty picks the mask that makes each code easiest to read.
-- A code gets the strongest error correction that fits its size, so short text gets extra robustness for free.
-- A code can be drawn as SVG, or read module by module to draw it any other way.
-
-Every code is tested against ZXing's own encoder, module for module, and scanned back by ZXing's reader.
+### Features
+- Encodes any UTF-8 string as a QR code.
+- Supports export to SVG.
+- Works both on the [JVM](https://en.wikipedia.org/wiki/Java_virtual_machine), and in the browser with [Scala.js](https://www.scala-js.org/).
+- Supports every [version](https://en.wikipedia.org/wiki/QR_code#Information_capacity) (1 to 40) and [error correction](https://en.wikipedia.org/wiki/QR_code#Error_correction) level.
+- Automatically picks the best [mask](https://en.wikipedia.org/wiki/QR_code#Format_information_and_masking) for each input.
+- Automatically increases the error correction level when there is spare information capacity.
 
 ## ⬇️ Installation
 
-The following applies for [Scala 3](https://www.scala-lang.org/) projects built with [sbt 2](https://www.scala-sbt.org/).
+> [!NOTE]
+> The following applies for [Scala 3](https://www.scala-lang.org/) projects built with [sbt 2](https://www.scala-sbt.org/).
+
 Add the library to your `build.sbt` file, with the desired version number (e.g. [latest](../../releases/latest)):
 
 ```scala
@@ -36,8 +37,10 @@ libraryDependencies += "com.alecdorrington" %% "qr4s" % "{version}"
 
 ## 🚀 Usage
 
-[`QrCode.of`](src/main/scala/com/alecdorrington/qr4s/QrCode.scala) encodes text as UTF-8, in the smallest code it fits, or
-`None` if it is too long for any:
+### Creating a QR code
+
+[`QrCode.of`](src/main/scala/com/alecdorrington/qr4s/QrCode.scala) encodes a string in the smallest QR code that can fit it
+(or `None` if it is too long for even the largest size).
 
 ```scala
 import com.alecdorrington.qr4s.QrCode
@@ -45,47 +48,40 @@ import com.alecdorrington.qr4s.QrCode
 val code: Option[QrCode] = QrCode.of("https://example.com")
 ```
 
-### Drawing a code
+### Drawing a QR code
 
-`svg` is the code as an SVG image of its own: black on white, in the margin scanners need around it,
-scaling to whatever box it is given.
+`.svg()` writes the code as an SVG image (black-on-white, by default).
 
 ```scala
-code.map(_.svg()) // <svg xmlns="http://www.w3.org/2000/svg" viewBox="-4 -4 33 33" ...
+val image = code.map(_.svg()) // <svg xmlns="http://www.w3.org/2000/svg" viewBox="-4 -4 33 33" ...
 ```
 
-To match the colours around it, give it others: any colour SVG knows, for the dark modules and for the light
-ones with the margin. `currentColor` is the colour of the text around an image inlined in a page, and `none`
-leaves the light modules transparent, over a light background of the page's own.
+The colours can be changed by passing hex strings.
+Alternatively, use `none` for transparent, or `currentColor` for the colour of the text around an inlined image.
 
 ```scala
 code.map(_.svg(dark = "#312E81", light = "#EEF2FF"))
 ```
 
-To build the image yourself, as with a UI library's own SVG elements, `svgPath` is the dark modules as the data
-of one SVG path, one unit to a module. Fill it dark, over a light background reaching `QrCode.quietZone`
-modules beyond the code on every side.
-
-Or draw it any way you like, module by module:
+Or draw it any way you like, voxel-by-voxel:
 
 ```scala
-code.map: qr =>
-  for
-    y <- 0 until qr.size
-    x <- 0 until qr.size
-    if qr.dark(x, y)
-  yield (x, y)
+val code: QrCode = ???
+val voxels = for
+  y <- 0 until code.size
+  x <- 0 until code.size
+  if code.dark(x, y)
+yield (x, y)
 ```
 
-Whatever its colours, keep a code much darker than its background: not every scanner reads one inverted, or one
-of little contrast.
+> [!NOTE]
+> Make sure to maintain sufficient contrast between the light and dark colours, or else some QR scanners may struggle.
 
 ### Error correction
 
-A [`Correction`](src/main/scala/com/alecdorrington/qr4s/Correction.scala) level says how much of a code may be smudged, torn or
-misread with it still being read, paid for in room for data: `Low` (about 7%), `Medium` (15%, the default),
-`Quartile` (25%) or `High` (30%). It is the least a code gets: where a stronger level fits a code of the same
-size, that is used instead.
+A [`Correction`](src/main/scala/com/alecdorrington/qr4s/Correction.scala) level determines how much of a code may be smudged, torn or
+misread while completely preserving readability. The options include `Low` (about 7%), `Medium` (15%, the default),
+`Quartile` (25%) or `High` (30%). Of course, higher levels of error correction will typically generate larger QR codes, given the same data.
 
 ```scala
 import com.alecdorrington.qr4s.Correction
@@ -94,9 +90,7 @@ QrCode.of("https://example.com", Correction.High)
 ```
 
 ## 👁️ See also
-
-- [Hecate](https://github.com/SgtSwagrid/hecate), a sibling, for user accounts, sessions, groups and permissions.
-- [Eunomia](https://github.com/SgtSwagrid/eunomia), a sibling, for filtering, ordering and paging lists.
-- [Iris](https://github.com/SgtSwagrid/iris), a sibling, a provider-agnostic client for large language models.
-- [Dike](https://github.com/SgtSwagrid/dike), a sibling, for ranking by pairwise comparison.
+- [ZXing](https://zxing.org/w/decode.jspx) is a library which supports encoding and decoding QR codes, alongside other similar formats like barcodes.
+  _qr4s_ by contrast is much simpler: it doesn't support decoding, and it only supports QR codes.
+  However, ZXing is written in Java and so only supports the JVM; it won't allow you to generate codes in a browser.
 - This library was made using [Scala Library Template](https://github.com/SgtSwagrid/scala-library-template).

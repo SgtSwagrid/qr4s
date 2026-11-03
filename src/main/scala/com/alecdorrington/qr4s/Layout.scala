@@ -121,7 +121,7 @@ private[qr4s] object Layout:
     * bits, all masked so as never to be all light.
     */
   def formatBits(correction: Correction, mask: Int): Int =
-    val data = correction.bits << 3 | mask
+    val data = correction.id << 3 | mask
     (data << 10 | remainder(data, 10, 0x537)) ^ 0x5412
 
   private def formatPositions(width: Int, i: Int): Seq[Position] =
