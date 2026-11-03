@@ -7,27 +7,27 @@
 </div>
 <div class="main-signature mono-small-block">
  <div class="signature">
-  <span class="modifiers"></span><span class="kind"><span t="k">enum </span></span><a href="Correction.html" t="n" class="documentableName ">Correction</a>(<span t="k"></span><span t="k">val </span><span data-unresolved-link="" t="n">bits</span>: <span data-unresolved-link="" t="t">Int</span>, <span t="k"></span><span data-unresolved-link="" t="n">checksByVersion</span>: <span data-unresolved-link="" t="t">Vector</span>[<span data-unresolved-link="" t="t">Int</span>], <span t="k"></span><span data-unresolved-link="" t="n">blocksByVersion</span>: <span data-unresolved-link="" t="t">Vector</span>[<span data-unresolved-link="" t="t">Int</span>])
+  <span class="modifiers"></span><span class="kind"><span t="k">enum </span></span><a href="Correction.html" t="n" class="documentableName ">Correction</a>(<span t="k"></span><span t="k">val </span><span data-unresolved-link="" t="n">id</span>: <span data-unresolved-link="" t="t">Int</span>, <span t="k"></span><span data-unresolved-link="" t="n">checksByVersion</span>: <span data-unresolved-link="" t="t">Vector</span>[<span data-unresolved-link="" t="t">Int</span>], <span t="k"></span><span data-unresolved-link="" t="n">blocksByVersion</span>: <span data-unresolved-link="" t="t">Vector</span>[<span data-unresolved-link="" t="t">Int</span>])
  </div>
 </div>
 <div class="cover">
  <div class="doc">
-  <p>A level of error correction: how much of a <a href="QrCode.html">QrCode</a> may be lost with it still being read, paid for in room for data. The levels run from the weakest to the strongest.</p>
+  <p>The level of error correction for a QR code.</p>
  </div>
  <section id="attributes">
   <h2 class="h500">Value parameters</h2>
   <dl class="attributes">
-   <dt class="body-small">bits</dt>
-   <dd class="body-medium">
-    <p>The two bits naming the level in a code's format information.</p>
-   </dd>
    <dt class="body-small">blocksByVersion</dt>
    <dd class="body-medium">
-    <p>The number of blocks the codewords are split into, by version from <code>1</code>.</p>
+    <p>The number of blocks the codewords are split into, per code size from 1.</p>
    </dd>
    <dt class="body-small">checksByVersion</dt>
    <dd class="body-medium">
-    <p>The number of error-correcting codewords in each block, by version from <code>1</code>.</p>
+    <p>The number of error-correcting codewords in each block, per code size from 1.</p>
+   </dd>
+   <dt class="body-small">id</dt>
+   <dd class="body-medium">
+    <p>The 2-bit ID of the error correction level.</p>
    </dd>
   </dl>
   <h2 class="h500">Attributes</h2>
@@ -130,11 +130,11 @@ node7 -> node2;
            <div class="originInfo"></div>
            <div class="memberDocumentation">
             <div class="documentableBrief doc">
-             <p>About 30% may be lost.</p>
+             <p>High error correction; data is preserved up to a ~30% image loss.</p>
             </div>
             <div class="cover">
              <div class="doc">
-              <p>About 30% may be lost.</p>
+              <p>High error correction; data is preserved up to a ~30% image loss.</p>
              </div>
              <h2 class="h200">Attributes</h2>
              <dl class="attributes attributes-small"></dl>
@@ -158,11 +158,11 @@ node7 -> node2;
            <div class="originInfo"></div>
            <div class="memberDocumentation">
             <div class="documentableBrief doc">
-             <p>About 7% may be lost.</p>
+             <p>Low error correction; data is preserved up to a ~7% image loss.</p>
             </div>
             <div class="cover">
              <div class="doc">
-              <p>About 7% may be lost.</p>
+              <p>Low error correction; data is preserved up to a ~7% image loss.</p>
              </div>
              <h2 class="h200">Attributes</h2>
              <dl class="attributes attributes-small"></dl>
@@ -186,11 +186,11 @@ node7 -> node2;
            <div class="originInfo"></div>
            <div class="memberDocumentation">
             <div class="documentableBrief doc">
-             <p>About 15% may be lost.</p>
+             <p>Medium error correction; data is preserved up to a ~15% image loss.</p>
             </div>
             <div class="cover">
              <div class="doc">
-              <p>About 15% may be lost.</p>
+              <p>Medium error correction; data is preserved up to a ~15% image loss.</p>
              </div>
              <h2 class="h200">Attributes</h2>
              <dl class="attributes attributes-small"></dl>
@@ -214,11 +214,11 @@ node7 -> node2;
            <div class="originInfo"></div>
            <div class="memberDocumentation">
             <div class="documentableBrief doc">
-             <p>About 25% may be lost.</p>
+             <p>Quartile error correction; data is preserved up to a ~25% image loss.</p>
             </div>
             <div class="cover">
              <div class="doc">
-              <p>About 25% may be lost.</p>
+              <p>Quartile error correction; data is preserved up to a ~25% image loss.</p>
              </div>
              <h2 class="h200">Attributes</h2>
              <dl class="attributes attributes-small"></dl>

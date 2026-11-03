@@ -1,6 +1,6 @@
 pages = [{"l":"index.html#","e":false,"i":"","n":"qr4s","t":"qr4s","d":"","k":"static","x":""},
 {"l":"com/alecdorrington/qr4s.html#","e":false,"i":"","n":"com.alecdorrington.qr4s","t":"com.alecdorrington.qr4s","d":"","k":"package","x":""},
-{"l":"com/alecdorrington/qr4s/Correction.html#","e":false,"i":"","n":"Correction","t":"Correction(val bits: Int, checksByVersion: Vector[Int], blocksByVersion: Vector[Int])","d":"com.alecdorrington.qr4s","k":"enum","x":""},
+{"l":"com/alecdorrington/qr4s/Correction.html#","e":false,"i":"","n":"Correction","t":"Correction(val id: Int, checksByVersion: Vector[Int], blocksByVersion: Vector[Int])","d":"com.alecdorrington.qr4s","k":"enum","x":""},
 {"l":"com/alecdorrington/qr4s/Correction.html#Low-0","e":false,"i":"","n":"Low","t":"Low extends Correction","d":"com.alecdorrington.qr4s.Correction","k":"val","x":""},
 {"l":"com/alecdorrington/qr4s/Correction.html#Medium-0","e":false,"i":"","n":"Medium","t":"Medium extends Correction","d":"com.alecdorrington.qr4s.Correction","k":"val","x":""},
 {"l":"com/alecdorrington/qr4s/Correction.html#Quartile-0","e":false,"i":"","n":"Quartile","t":"Quartile extends Correction","d":"com.alecdorrington.qr4s.Correction","k":"val","x":""},

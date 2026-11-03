@@ -35,7 +35,7 @@
           <button class="icon-button ar show-content"></button>
           <div class="header monospace mono-medium">
            <div class="signature">
-            <span class="modifiers"></span><span class="kind"><span t="k">enum </span></span><a href="qr4s/Correction.html" t="n" class="documentableName ">Correction</a>(<span t="k"></span><span t="k">val </span><span data-unresolved-link="" t="n">bits</span>: <span data-unresolved-link="" t="t">Int</span>, <span t="k"></span><span data-unresolved-link="" t="n">checksByVersion</span>: <span data-unresolved-link="" t="t">Vector</span>[<span data-unresolved-link="" t="t">Int</span>], <span t="k"></span><span data-unresolved-link="" t="n">blocksByVersion</span>: <span data-unresolved-link="" t="t">Vector</span>[<span data-unresolved-link="" t="t">Int</span>])
+            <span class="modifiers"></span><span class="kind"><span t="k">enum </span></span><a href="qr4s/Correction.html" t="n" class="documentableName ">Correction</a>(<span t="k"></span><span t="k">val </span><span data-unresolved-link="" t="n">id</span>: <span data-unresolved-link="" t="t">Int</span>, <span t="k"></span><span data-unresolved-link="" t="n">checksByVersion</span>: <span data-unresolved-link="" t="t">Vector</span>[<span data-unresolved-link="" t="t">Int</span>], <span t="k"></span><span data-unresolved-link="" t="n">blocksByVersion</span>: <span data-unresolved-link="" t="t">Vector</span>[<span data-unresolved-link="" t="t">Int</span>])
            </div>
           </div>
          </div>
@@ -45,25 +45,25 @@
            <div class="originInfo"></div>
            <div class="memberDocumentation">
             <div class="documentableBrief doc">
-             <p>A level of error correction: how much of a <a href="qr4s/QrCode.html">QrCode</a> may be lost with it still being read, paid for in room for data. The levels run from the weakest to the strongest.</p>
+             <p>The level of error correction for a QR code.</p>
             </div>
             <div class="cover">
              <div class="doc">
-              <p>A level of error correction: how much of a <a href="qr4s/QrCode.html">QrCode</a> may be lost with it still being read, paid for in room for data. The levels run from the weakest to the strongest.</p>
+              <p>The level of error correction for a QR code.</p>
              </div>
              <h2 class="h200">Value parameters</h2>
              <dl class="attributes attributes-small">
-              <dt class="body-small">bits</dt>
-              <dd class="body-medium">
-               <p>The two bits naming the level in a code's format information.</p>
-              </dd>
               <dt class="body-small">blocksByVersion</dt>
               <dd class="body-medium">
-               <p>The number of blocks the codewords are split into, by version from <code>1</code>.</p>
+               <p>The number of blocks the codewords are split into, per code size from 1.</p>
               </dd>
               <dt class="body-small">checksByVersion</dt>
               <dd class="body-medium">
-               <p>The number of error-correcting codewords in each block, by version from <code>1</code>.</p>
+               <p>The number of error-correcting codewords in each block, per code size from 1.</p>
+              </dd>
+              <dt class="body-small">id</dt>
+              <dd class="body-medium">
+               <p>The 2-bit ID of the error correction level.</p>
               </dd>
              </dl>
              <h2 class="h200">Attributes</h2>
